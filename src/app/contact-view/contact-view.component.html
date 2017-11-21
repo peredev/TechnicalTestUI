@@ -1,0 +1,174 @@
+<div class="row">
+  <div class="col-md-3">
+    <div class="row">
+      <div class="col-12" style="margin-top: 10px">
+        <div class="form-group">
+          <input type="text" class="form-control" id="search" [(ngModel)]="searchTerm" placeholder="Search Contacts">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <ul class="list-group">
+          <li class="list-group-item"
+              *ngFor="let contact of contacts | contactFilter: searchTerm"
+              (click)="selectContact(contact)">
+            {{ contact.firstName }} {{ contact.lastName }}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-9">
+    <form onsubmit="saveContact()"></form>
+    <div class="row">
+      <div class="col-12">
+        <button
+          class="btn btn-success float-right"
+          style="margin: 10px"
+          type="submit"
+          [disabled]="!firstName.valid || !lastName.valid || !email.valid"
+          (click)="saveContact()">
+          Add / Save Contact
+        </button>
+        <button
+          class="btn btn-primary float-right"
+          style="margin: 10px"
+          (click)="clearContact()">
+          Clear Contact
+        </button>
+        <button
+          class="btn btn-danger float-right"
+          style="margin: 10px"
+          [disabled]="isDeleteButtonDisabled()"
+          (click)="showConfirmationModal(deleteContact)">
+          Delete Contact
+        </button>
+      </div>
+    </div>
+
+    <div class="row">
+
+      <div class="col-md-6 mb-3">
+        <label for="validationFirstName">First name</label>
+        <input type="text"
+               #firstName="ngModel"
+               class="form-control"
+               id="validationFirstName"
+               placeholder="First name"
+               [(ngModel)]="selectedContact.firstName" required>
+        <div *ngIf="firstName.invalid && (firstName.dirty || firstName.touched)" class="alert alert-danger">
+          Please provide your first name.
+        </div>
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <label for="validationLastName">Last name</label>
+        <input type="text"
+               #lastName="ngModel"
+               class="form-control"
+               id="validationLastName"
+               placeholder="Last name"
+               [(ngModel)]="selectedContact.lastName" required>
+        <div *ngIf="lastName.invalid && (lastName.dirty || lastName.touched)" class="alert alert-danger">
+          Please provide your last name.
+        </div>
+      </div>
+
+
+      <div class="col-md-6 mb-3">
+        <label for="validationEmail">Email Address</label>
+        <input type="email"
+               class="form-control"
+               #email="ngModel"
+               id="validationEmail"
+               placeholder="Email Address"
+               [(ngModel)]="selectedContact.emailAddress" required>
+        <div *ngIf="email && email.invalid && (email.dirty || email.touched)" class="alert alert-danger">
+          Please provide a valid email address.
+        </div>
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <label for="validationTelephone">Telephone Number</label>
+        <input type="text"
+               name="telephone"
+               class="form-control"
+               id="validationTelephone"
+               placeholder="Telephone No"
+               [(ngModel)]="selectedContact.telephoneNumber">
+
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <label for="validationAddress1">Address Line 1</label>
+        <input type="text"
+               name="address1"
+               class="form-control"
+               id="validationAddress1"
+               placeholder="Address Line 1"
+               [(ngModel)]="selectedContact.address1">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="validationAddress2">Address Line 2</label>
+        <input type="text"
+               name="address2"
+               class="form-control"
+               id="validationAddress2"
+               placeholder="Address Line 2"
+               [(ngModel)]="selectedContact.address2">
+      </div>
+      <div class="col-md-6 mb-3">
+        <label for="validationCity">City</label>
+        <input type="text"
+               name="address3"
+               class="form-control"
+               id="validationCity"
+               placeholder="City"
+               [(ngModel)]="selectedContact.city">
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <label for="validationPostcode">Postcode</label>
+        <input type="text"
+               class="form-control"
+               id="validationPostcode"
+               placeholder="Postcode"
+               [(ngModel)]="selectedContact.postcode">
+      </div>
+
+    </div>
+
+    <div class="row" *ngIf="selectedContactActivities && selectedContactActivities.length > 0">
+      <div class="col-12">
+        <h3>Activities</h3>
+        <table class="table">
+          <tr>
+            <th>Subject</th>
+            <th>Type</th>
+            <th>Due Date</th>
+          </tr>
+          <tr *ngFor="let activity of selectedContactActivities">
+            <td>{{ activity.subject }}</td>
+            <td>{{ activity.activityType.type }}</td>
+            <td>{{ activity.dueDate | date: 'dd/MM/yyyy' }}</td>
+          </tr>
+        </table>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<ng-template #deleteContact let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Confirmation</h4>
+  </div>
+  <div class="modal-body">
+    <p>Are you sure you want to delete this contact?</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-danger" (click)="c('saved')">Yes</button>
+    <button class="btn btn-primary" (click)="d('closed')">No</button>
+  </div>
+</ng-template>

@@ -1,0 +1,129 @@
+<div class="row">
+  <div class="col-md-3">
+    <div class="row">
+      <div class="col-12" style="margin-top: 10px">
+        <div class="form-group">
+          <input type="text" class="form-control" id="search" [(ngModel)]="searchTerm" placeholder="Search Contacts">
+        </div>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <ul class="list-group">
+          <li class="list-group-item"
+              *ngFor="let activity of activities | activityFilter: searchTerm"
+              (click)="selectActivity(activity)">
+            {{ activity.contact.firstName }} {{ activity.contact.lastName }} - {{ activity.subject }}
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div class="col-md-9">
+    <div class="row">
+      <div class="col-12">
+        <button
+          class="btn btn-success float-right"
+          style="margin: 10px;"
+          (click)="saveActivity()">
+          Add Activity
+        </button>
+        <button
+          class="btn btn-primary float-right"
+          style="margin: 10px;"
+          (click)="clearActivity()">
+          Clear Activity
+        </button>
+
+        <button
+          class="btn btn-danger float-right"
+          style="margin: 10px;"
+          [disabled]="!currentActivity.id"
+          (click)="showConfirmationModal(content)">
+          Delete Activity
+        </button>
+      </div>
+    </div>
+
+    <div class="row">
+      <div class="col-3">
+        <div class="form-group">
+          <label for="contact">Contact</label>
+          <select [compareWith]="equals" class="form-control" id="contact" #contactSelect="ngModel" [(ngModel)]="currentActivity.contact"
+                  required>
+            <option [ngValue]="">Please Select</option>
+            <option [ngValue]="contact" *ngFor="let contact of contacts">
+              {{ contact.firstName }} {{ contact.lastName }}
+            </option>
+          </select>
+          <div *ngIf="contactSelect.invalid && (contactSelect.dirty || contactSelect.touched)"
+               class="alert alert-danger">
+            Please select a contact
+          </div>
+        </div>
+      </div>
+      <div class="col-3">
+        <div class="form-group">
+          <label for="se">Type</label>
+          <select class="form-control"
+                  id="se"
+                  [compareWith]="equals"
+                  #typeSelect="ngModel"
+                  [(ngModel)]="currentActivity.activityType"
+                  required>
+            <option [value]="">Please Select</option>
+            <option [ngValue]="type" *ngFor="let type of activityTypes">
+              {{ type.type }}
+            </option>
+          </select>
+          <div *ngIf="typeSelect.invalid && (typeSelect.dirty || typeSelect.touched)" class="alert alert-danger">
+            Please select a type
+          </div>
+        </div>
+      </div>
+      <div class="col-3">
+        <form>
+          <div class="form-group">
+            <label for="dueDate">Due Date</label>
+            <div class="input-group">
+              <input class="form-control" placeholder="yyyy-mm-dd"
+                     name="dp" [(ngModel)]="dueDate" ngbDatepicker #d="ngbDatepicker" id="dueDate">
+              <button class="input-group-addon" (click)="d.toggle()" type="button">
+                <img src="img/calendar-icon.svg" style="width: 1.2rem; height: 1rem; cursor: pointer;"/>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-12">
+        <div class="form-group">
+          <label for="subject" class="col-form-label">Subject</label>
+          <input class="form-control" type="text" #subjectInput="ngModel" [(ngModel)]="currentActivity.subject" id="subject" required>
+          <div *ngIf="subjectInput.invalid && (subjectInput.dirty || subjectInput.touched)" class="alert alert-danger">
+            Please insert a subject
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="col-form-label" for="notes">Notes</label>
+          <textarea class="form-control" rows="15" id="notes" [(ngModel)]="currentActivity.notes"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<ng-template #content let-c="close" let-d="dismiss">
+  <div class="modal-header">
+    <h4 class="modal-title">Confirmation</h4>
+  </div>
+  <div class="modal-body">
+    <p>Are you sure you want to delete this activity?</p>
+  </div>
+  <div class="modal-footer">
+    <button class="btn btn-danger" (click)="deleteActivity()">Yes</button>
+    <button class="btn btn-primary" (click)="c('close')">No</button>
+  </div>
+</ng-template>
